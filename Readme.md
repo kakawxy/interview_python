@@ -516,8 +516,10 @@ AttributeError: myClass instance has no attribute '__superprivate'
 
 * 不知道它(在读这个之前)
 * 为了和Python2.5兼容(譬如logging库建议使用`%`([issue #4](https://github.com/taizilongxu/interview_python/issues/4)))
+
 "{0} {1}".format("hello", "world")  # 设置指定位置
 print("网站名：{name}, 地址 {url}".format(name="菜鸟教程", url="www.runoob.com"))
+
 通过字典设置参数
 site = {"name": "菜鸟教程", "url": "www.runoob.com"}
 print("网站名：{name}, 地址 {url}".format(**site))
