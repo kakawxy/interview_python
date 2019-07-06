@@ -454,6 +454,7 @@ b = {'a':1,'b':2,'c':3}
 c = True
 print type(a),type(b),type(c) # <type 'list'> <type 'dict'> <type 'bool'>
 print isinstance(a,list)  # True
+dir()   #  获得当前模块的属性列表
 ```
 
 
