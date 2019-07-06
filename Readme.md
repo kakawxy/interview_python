@@ -536,6 +536,31 @@ http://stackoverflow.com/questions/5082452/python-string-formatting-vs-format
 
 这是中文版: http://taizilongxu.gitbooks.io/stackoverflow-about-python/content/1/README.html
 
+1.迭代器协议是指：对象必须提供一个next方法，执行该方法要么返回迭代中的下一项，要么就引起一个StopIteration异常，以终止迭代 （只能往后走不能往前退） 
+2.可迭代对象：实现了迭代器协议的对象（如何实现：对象内部定义一个__iter__()方法）  
+3.协议是一种约定，可迭代对象实现了迭代器协议，python的内部工具（如for循环，sum，min，max函数等)使用迭代器协议访问对象。  
+
+for 循环机制  
+for循环的本质：循环所有对象，全都是使用迭代器协议。  
+for循环就是基于迭代器协议提供了一个统一的可以遍历所有对象的方法，即在遍历之前，先调用对象的__iter__方法将其转换成一个迭代器，然后使用迭代器协议去实现循环访问，这样所有的对象就都可以通过for循环来遍历了，  
+列表，字符串，元组，字典，集合，文件对象等本质上来说都不是可迭代对象，在使用for循环的时候内部是先调用他们内部的*iter*方法，使他们变成了可迭代对象，然后在使用可迭代对象的*next*方法依次循环元素，当元素循环完时，会触发StopIteration异常，for循环会捕捉到这种异常，终止迭代  
+
+访问方式常见的有下标方式访问、迭代器协议访问、for循环访问 
+
+迭代器是访问集合元素的一种方式。迭代器对象从集合的第一个元素开始访问，直到所有的元素被访问完结束。迭代器只能往前不会后退  
+不像列表把所有元素一次性加载到内存，迭代器是以一种延迟计算（lazy evaluation）方式返回元素，不要求事先准备好整个迭代过程中所有的元素。迭代器仅仅在迭代到某个元素时才计算该元素，而在这之前或之后，元素可以不存在或者被销毁。这个特点使得它特别适合用于遍历一些巨大的或是无限的集合  
+迭代器有两个基本的方法 next方法：返回迭代器的下一个元素 \_\_ 方法：返回迭代器对象本身  
+1.访问者不需要关心迭代器内部的结构，仅需通过next()方法不断去取下一个内容
+2.不能随机访问集合中的某个值 ，只能从头到尾依次访问
+3.访问到一半时不能往回退
+4.便于循环比较大的数据集合，节省内存
+
+
+生成器：语法上和函数类似：生成器函数和常规函数几乎是一样的。它们都是使用def语句进行定义，差别在于，生成器使用yield语句返回一个值，而常规函数使用return语句返回一个值（只要一个函数内出现了yield，那它就是一个生成器函数，执行这个函数就得到一个生成器）  
+自动实现迭代器协议：对于生成器，Python会自动实现迭代器协议，以便应用到迭代背景中（如for循环，sum函数）。由于生成器自动实现了迭代器协议，所以，我们可以调用它的next方法，并且，在没有值可以返回的时候，生成器自动产生StopIteration异常  
+状态挂起：生成器使用yield语句返回一个值。yield语句挂起该生成器函数的状态，保留足够的信息，以便之后从它离开的地方继续执行  
+生成器的唯一注意事项就是：生成器只能遍历一次。  
+
 这里有个关于生成器的创建问题面试官有考：
 问：  将列表生成式中[]改成() 之后数据结构是否改变？ 
 答案：是，从列表变为生成器
@@ -605,13 +630,176 @@ http://stackoverflow.com/questions/3394835/args-and-kwargs
 
 ## 11 面向切面编程AOP和装饰器
 
-这个AOP一听起来有点懵,同学面阿里的时候就被问懵了...
+(扩充)这个AOP一听起来有点懵,同学面阿里的时候就被问懵了...
 
 装饰器是一个很著名的设计模式，经常被用于有切面需求的场景，较为经典的有插入日志、性能测试、事务处理等。装饰器是解决这类问题的绝佳设计，有了装饰器，我们就可以抽离出大量函数中与函数功能本身无关的雷同代码并继续重用。概括的讲，**装饰器的作用就是为已经存在的对象添加额外的功能。**
+
+AOP：简言之、这种在运行时，编译时，类和方法加载时，动态地将代码切入到类的指定方法、指定位置上的编程思想就是面向切面的编程。
+我们管切入到指定类指定方法的代码片段称为切面，而切入到哪些类、哪些方法则叫切入点。有了AOP，我们就可以把几个类共有的代码，抽取到一个切片中，等到需要时再切入对象中去，从而改变其原有的行为。
+优点是：这样的做法，对原有代码毫无入侵性
+装饰器：装饰器是一个很著名的设计模式，经常被用于有切面需求的场景，较为经典的有插入日志、性能测试、事务处理等。装饰器是解决这类问题的绝佳设计，有了装饰器，我们就可以抽离出大量函数中与函数功能本身无关的雷同代码并继续重用。
+概括的讲，装饰器的作用就是为已经存在的对象添加额外的功能。
+要想明白装饰器首先要明白一个概念即函数即是对象。
+函数就是对象.因此,对象:
+
+可以赋值给一个变量；以在其他函数里定义；函数可以返回另一个函数；函数作为参数传递
+
+```自己动手实现装饰器
+# 装饰器就是把其他函数作为参数的函数
+def my_new_decorator(a_function_to_decorate):
+
+    # 在函数里面,装饰器在运行中定义函数: 包装.
+    # 这个函数将被包装在原始函数的外面,所以可以在原始函数之前和之后执行其他代码..
+    def the_wrapper_function():
+
+        # 把要在原始函数被调用前的代码放在这里
+        print "Before the function runs"
+
+        # 调用原始函数(用括号)
+        a_function_to_decorate()
+
+        # 把要在原始函数调用后的代码放在这里
+        print "After the function runs"
+
+    # 在这里"a_function_to_decorate" 函数永远不会被执行
+    # 在这里返回刚才包装过的函数
+    # 在包装函数里包含要在原始函数前后执行的代码.
+    return the_wrapper_function
+
+# 加入你建了个函数,不想修改了
+def a_stand_alone_function():
+    print "I am a stand alone function, don't you dare modify me"
+
+a_stand_alone_function()
+#输出: I am a stand alone function, don't you dare modify me
+
+# 现在,你可以装饰它来增加它的功能
+# 把它传递给装饰器,它就会返回一个被包装过的函数.
+
+a_function_decorated = my_new_decorator(a_stand_alone_function)
+# 执行
+a_function_decorated()
+#输出s:
+#Before the function runs
+#I am a stand alone function, don't you dare modify me
+#After the function runs
+
+真实装饰器
+@my_new_decorator
+def another_stand_alone_function():
+    print "Leave me alone"
+
+another_stand_alone_function()
+#输出:
+#Before the function runs
+#Leave me alone
+#After the function runs
+
+从这里可以看出@decorator就是下面的简写:
+another_stand_alone_function = my_new_decorator(another_stand_alone_function)
+
+在装饰器函数里传入参数
+def a_decorator_passing_arguments(function_to_decorate):
+    def a_wrapper_accepting_arguments(arg1, arg2):
+        print "I got args! Look:", arg1, arg2
+        function_to_decorate(arg1, arg2)
+    return a_wrapper_accepting_arguments
+
+# 当你调用装饰器返回的函数时,也就调用了包装器,把参数传入包装器里,
+# 它将把参数传递给被装饰的函数里.
+
+@a_decorator_passing_arguments
+def print_full_name(first_name, last_name):
+    print "My name is", first_name, last_name
+
+print_full_name("Peter", "Venkman")
+# 输出:
+#I got args! Look: Peter Venkman
+#My name is Peter Venkman
+
+把参数传给装饰器
+# 装饰器就是一个'平常不过'的函数
+def my_decorator(func):
+    print "I am an ordinary function"
+    def wrapper():
+        print "I am function returned by the decorator"
+        func()
+    return wrapper
+
+# 因此你可以不用"@"也可以调用他
+
+def lazy_function():
+    print "zzzzzzzz"
+
+decorated_function = my_decorator(lazy_function)
+#输出: I am an ordinary function
+
+# 之所以输出 "I am an ordinary function"是因为你调用了函数,
+# 并非什么魔法.
+
+@my_decorator
+def lazy_function():
+    print "zzzzzzzz"
+
+#输出: I am an ordinary function
+
+这里调用decorated_function（）才会输出装饰器里面的方法，建一个装饰器.它只是一个新函数，去掉中间变量他就会变为真正的装饰器，那么如何去掉中间变量
+def decorator_maker_with_arguments(decorator_arg1, decorator_arg2):
+
+    print "I make decorators! And I accept arguments:", decorator_arg1, decorator_arg2
+
+    def my_decorator(func):
+        # 这里传递参数的能力是借鉴了 closures.
+        # 如果对closures感到困惑可以看看下面这个:
+        # http://stackoverflow.com/questions/13857/can-you-explain-closures-as-they-relate-to-python
+        print "I am the decorator. Somehow you passed me arguments:", decorator_arg1, decorator_arg2
+
+        # 不要忘了装饰器参数和函数参数!
+        def wrapped(function_arg1, function_arg2) :
+            print ("I am the wrapper around the decorated function.\n"
+                  "I can access all the variables\n"
+                  "\t- from the decorator: {0} {1}\n"
+                  "\t- from the function call: {2} {3}\n"
+                  "Then I can pass them to the decorated function"
+                  .format(decorator_arg1, decorator_arg2,
+                          function_arg1, function_arg2))
+            return func(function_arg1, function_arg2)
+
+        return wrapped
+
+    return my_decorator
+
+@decorator_maker_with_arguments("Leonard", "Sheldon")
+def decorated_function_with_arguments(function_arg1, function_arg2):
+    print ("I am the decorated function and only knows about my arguments: {0}"
+           " {1}".format(function_arg1, function_arg2))
+
+decorated_function_with_arguments("Rajesh", "Howard")
+#输出:
+#I make decorators! And I accept arguments: Leonard Sheldon
+#I am the decorator. Somehow you passed me arguments: Leonard Sheldon
+#I am the wrapper around the decorated function.
+#I can access all the variables
+#   - from the decorator: Leonard Sheldon
+#   - from the function call: Rajesh Howard
+#Then I can pass them to the decorated function
+#I am the decorated function and only knows about my arguments: Rajesh Howard
+
+看到了吗?我们用一个函数调用"@“
+```
+装饰器的知识点
+
+装饰器使函数调用变慢了.一定要记住.
+装饰器不能被取消(有些人把装饰器做成可以移除的但是没有人会用)所以一旦一个函数被装饰了.所有的代码都会被装饰.
+
+内置的装饰器有三个，分别是staticmethod、classmethod和property，作用分别是把类中定义的实例方法变成静态方法、类方法和类属性。由于模块里可以定义函数，所以静态方法和类方法的用处并不是太多，除非你想要完全的面向对象编程。而属性也不是不可或缺的，Java没有属性也一样活得很滋润。从我个人的Python经验来看，我没有使用过property，使用staticmethod和classmethod的频率也非常低。
+Django用装饰器管理缓存和试图的权限.
+Twisted用来修改异步函数的调用.
 
 这个问题比较大,推荐: http://stackoverflow.com/questions/739654/how-can-i-make-a-chain-of-function-decorators-in-python
 
 中文: http://taizilongxu.gitbooks.io/stackoverflow-about-python/content/3/README.html
+
 
 ## 12 鸭子类型
 
