@@ -1013,7 +1013,7 @@ post: [RFC 2616 - Hypertext Transfer Protocol -- HTTP/1.1](http://tools.ietf.org
 
 
 ## 6 Cookie和Session
-
+ 
 |      | Cookie                     | Session |
 | :--- | :------------------------- | :------ |
 | 储存位置 | 客户端                        | 服务器端    |
