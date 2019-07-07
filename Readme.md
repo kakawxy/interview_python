@@ -1338,6 +1338,22 @@ Python 中，一个变量的作用域总是由在代码中被赋值的地方所�
 
 本地作用域（Local）→当前作用域被嵌入的本地作用域（Enclosing locals）→全局/模块作用域（Global）→内置作用域（Built-in）
 
+Python中变量的作用域？（变量查找顺序)
+
+函数作用域的LEGB顺序
+
+1.什么是LEGB?
+
+L： local 函数内部作用域
+
+E: enclosing 函数内部与内嵌函数之间
+
+G: global 全局作用域
+
+B： build-in 内置作用
+
+python在函数里面的查找分为4种，称之为LEGB，也正是按照这是顺序来查找的
+
 ## 18 GIL线程全局锁
 
 线程全局锁(Global Interpreter Lock),即Python为了保证线程安全而采取的独立线程运行的限制,说白了就是一个核只能在同一时间运行一个线程.**对于io密集型任务，python的多线程起到作用，但对于cpu密集型任务，python的多线程几乎占不到任何优势，还有可能因为争夺资源而变慢。**
@@ -1632,7 +1648,7 @@ python中对象包含的三个基本要素，分别是：id(身份标识)、type
 
 is是对比地址,比较的是两个实例对象是不是完全相同，它们是不是同一个对象，占用的内存地址是否相同
 
-==是对比值，比较的是两个对象的内容是否相等，即内存地址可以不一样，内容一样就可以了。
+==是对比值，比较的是两个对象的内容是否相等，即内存地址可以不一样，内容一样就可以了。默认会调用对象的eq()方法
 
 is 运算符比 == 效率高，在变量和None进行比较时，应该使用 is。
 
@@ -1837,6 +1853,16 @@ for i in xrange(0, 20):
 What is the difference between range and xrange functions in Python 2.X?
  range creates a list, so if you do range(1, 10000000) it creates a list in memory with 9999999 elements.
  xrange is a sequence object that evaluates lazily.
+
+xrange函数说明：语法上和range完全相同，所不同的是生成的不是一个数组，而是一个生成器。
+
+如果循环时用range，由上面结果我们也可以看出，上来就会生成一个数组。若是元素个数少还可以接受，但是如果元素个数非常多，那岂不是要开辟很大的内存来存放这个数组？这对让内存空间亚历山大呀。
+
+如果使用xrange，xrange返回的是一个生成器，一边循环一边计算，每次只返回一个值，这样就不必开辟这么大的内存空间了。
+
+因此，在循环里尽量使用xrange吧，随着元素个数增多，xrange性能要比range好的多。
+
+xrange函数在Python3中已经取消，在python3中，range()这种实现被移除了，保留了xrange()的实现，且将xrange()重新命名成range()。所以Python3不能使用xrange，只能使用range
 
 http://stackoverflow.com/questions/94935/what-is-the-difference-between-range-and-xrange-functions-in-python-2-x
 
@@ -2239,10 +2265,7 @@ letters = "".join(map(chr, range(ord('a'), ord('z') + 1)))
 
 3,不可变类型被改变时，并没有改变原内存地址中的值，而是开辟一块新的内存，将原地址中的值复制过去，对这块新开辟的内存中的值进行操作。
 
-### 24.is和==有什么区别？
-is：比较的是两个对象的id值是否相等，也就是比较俩对象是否为同一个实例对象。是否指向同一个内存地址
 
-== ： 比较的两个对象的内容/值是否相等，默认会调用对象的eq()方法
 ### 25.求出列表所有奇数并构造新列表
 ```python
 a = [1,2,3,4,5,6,7,8,9,10]
