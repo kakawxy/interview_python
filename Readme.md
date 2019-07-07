@@ -47,6 +47,7 @@
       * [30 range and xrange](#30-range-and-xrange)
       - [16.python中内置的数据结构有几种？](#16python中内置的数据结构有几种)
       - [23.可变类型和不可变类型](#23可变类型和不可变类型)
+      - [31.异常](#23异常)
       
       
       [Python基础](#python基础)
@@ -146,8 +147,6 @@
         - [101.请匹配出变量A 中的json字符串。](#101请匹配出变量a-中的json字符串)
         - [102.怎么过滤评论中的表情？](#102怎么过滤评论中的表情)
         - [103.简述Python里面search和match的区别](#103简述python里面search和match的区别)
-        - [104.请写出匹配ip的Python正则表达式](#104请写出匹配ip的python正则表达式)
-        - [105.Python里match与search的区别？](#105python里match与search的区别)
     - [系统编程](#系统编程)
         - [106.进程总结](#106进程总结)
         - [107.谈谈你对多进程，多线程，以及协程的理解，项目是否用？](#107谈谈你对多进程多线程以及协程的理解项目是否用)
@@ -2020,6 +2019,22 @@ d. Python3 中没有 long，只有无限精度的 int
 
 Pyhton中，数值类型(int 和float)，字符串str、元祖tuple都是不可变类型。而列表list、字典dict、集合set是可变类型
 
+### 31.异常
+
+如果我们没有对异常进行任何预防，那么在程序执行的过程中发生异常，就会中断程序，调用python默认的异常处理器，并在终端输出异常信息。
+
+try...except...finally语句:当try语句执行时发生异常，回到try语句层，寻找后面是否有except语句。
+
+找到except语句后，会调用这个自定义的异常处理器。except将异常处理完毕后，程序继续往下执行。finally语句表示，无论异常发生与否，finally中的语句都要执行。
+
+assert语句：判断assert后面紧跟的语句是True还是False，如果是True则继续执行print，如果是False则中断程序，调用默认的异常处理器，同时输出assert语句逗号后面的提示信息。
+
+with语句：如果with语句或语句块中发生异常，会调用默认的异常处理器处理，但文件还是会正常关闭。
+
+有用过with statement吗？它的好处是什么？具体如何实现？
+
+with语句适用于对资源进行访问的场合，确保不管使用过程中是否发生异常都会执行必要的“清理”操作，释放资源，比如文件使用后自动关闭、线程中锁的自动获取和释放等。
+
 # Python基础
 ## 文件操作
 ### 1.有一个jsonline格式的文件file.txt大小约为10K
@@ -3128,17 +3143,50 @@ class MyCls(object):
 
 ## 正则表达式
 ### 94.请写出一段代码用正则匹配出ip？
+
 ### 95.a = “abbbccc”，用正则匹配为abccc,不管有多少b，就出现一次？
 ### 96.Python字符串查找和替换？
 ### 97.用Python匹配HTML g tag的时候，<.> 和 <.*?> 有什么区别
+
 ### 98.正则表达式贪婪与非贪婪模式的区别？
+
 ### 99.写出开头匹配字母和下划线，末尾是数字的正则表达式？
 ### 100.正则表达式操作
 ### 101.请匹配出变量A 中的json字符串。
 ### 102.怎么过滤评论中的表情？
 ### 103.简述Python里面search和match的区别
-### 104.请写出匹配ip的Python正则表达式
-### 105.Python里match与search的区别？
+
+match()函数只检测字符串开头位置是否匹配，匹配成功才会返回结果，否则返回None
+```python
+import re
+print(re.match("func", "function"))
+# 打印结果 <_sre.SRE_Match object; span=(0, 4), match='func'>
+
+print(re.match("func", "function").span())
+# 打印结果  (0, 4)
+
+print(re.match("func1", "function"))
+# 打印结果 None
+
+注意：print(re.match("func1", "function").span())会报错，因为取不到span
+   
+```
+search()函数会在整个字符串内查找模式匹配,只到找到第一个匹配然后返回一个包含匹配信息的对象,该对象可以通过调用group()方法得到匹配的字符串,如果字符串没有匹配，则返回None。
+
+```python
+import re
+print(re.search("tion", "function"))
+# 打印结果 <_sre.SRE_Match object; span=(4, 8), match='tion'>
+
+print(re.search("tion", "function").span())
+# 打印结果  (4, 8)
+
+print(re.search("tion1", "function"))
+# 打印结果 None
+
+注意：print(re.search("tion1", "function").span())会报错，因为取不到tion1
+   
+```
 
 ## 系统编程
 ### 106.进程总结
