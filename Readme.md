@@ -40,6 +40,8 @@
       * [28 Python2和3的区别](#28-python2和3的区别)
       * [29 super init](#29-super-init)
       * [30 range and xrange](#30-range-and-xrange)
+      - [16.python中内置的数据结构有几种？](#16python中内置的数据结构有几种)
+      - [23.可变类型和不可变类型](#23可变类型和不可变类型)
       
       
       [Python基础](#python基础)
@@ -62,14 +64,12 @@
         - [14.给定两个list A，B ,请用找出A，B中相同与不同的元素](#14给定两个list-ab-请用找出ab中相同与不同的元素)
     - [企业面试题](#企业面试题)
         - [15.python新式类和经典类的区别？](#15python新式类和经典类的区别)
-        - [16.python中内置的数据结构有几种？](#16python中内置的数据结构有几种)
         - [17.python如何实现单例模式?请写出两种实现方式?](#17python如何实现单例模式请写出两种实现方式)
         - [18.反转一个整数，例如-123 --> -321](#18反转一个整数例如-123-----321)
         - [19.设计实现遍历目录与子目录，抓取.pyc文件](#19设计实现遍历目录与子目录抓取pyc文件)
         - [20.一行代码实现1-100之和](#20一行代码实现1-100之和)
         - [21.Python-遍历列表时删除元素的正确做法](#21python-遍历列表时删除元素的正确做法)
         - [22.字符串的操作题目](#22字符串的操作题目)
-        - [23.可变类型和不可变类型](#23可变类型和不可变类型)
         - [25.求出列表所有奇数并构造新列表](#25求出列表所有奇数并构造新列表)
         - [26.用一行python代码写出1+2+3+10248](#26用一行python代码写出12310248)
         - [27.Python中变量的作用域？（变量查找顺序)](#27python中变量的作用域变量查找顺序)
@@ -1157,6 +1157,15 @@ test3(1, 2, 'name'='pengshuyi', 'age'=20)# 打印结果：1 2 {'name':'pengshuyi
 
 ## 14 新式类和旧式类
 
+a. 在python里凡是继承了object的类，都是新式类
+
+b. Python3里只有新式类
+
+c. Python2里面继承object的是新式类，没有写父类的是经典类
+
+d. 经典类目前在Python里基本没有应用
+
+
 （扩充）这个面试官问了,我说了老半天,不知道他问的真正意图是什么.
 
 [stackoverflow](http://stackoverflow.com/questions/54867/what-is-the-difference-between-old-style-and-new-style-classes-in-python)
@@ -1328,6 +1337,67 @@ my_singleton.foo()
 
 ```
 **[单例模式伯乐在线详细解释](http://python.jobbole.com/87294/)**
+
+### 17.python如何实现单例模式?请写出两种实现方式?
+第一种方法:使用装饰器
+```python
+def singleton(cls):
+    instances = {}
+    def wrapper(*args, **kwargs):
+        if cls not in instances:
+            instances[cls] = cls(*args, **kwargs)
+        return instances[cls]
+    return wrapper
+    
+    
+@singleton
+class Foo(object):
+    pass
+foo1 = Foo()
+foo2 = Foo()
+print(foo1 is foo2)  # True
+```
+第二种方法：使用基类
+New 是真正创建实例对象的方法，所以重写基类的new 方法，以此保证创建对象的时候只生成一个实例
+```python
+class Singleton(object):
+    def __new__(cls, *args, **kwargs):
+        if not hasattr(cls, '_instance'):
+            cls._instance = super(Singleton, cls).__new__(cls, *args, **kwargs)
+        return cls._instance
+    
+    
+class Foo(Singleton):
+    pass
+
+foo1 = Foo()
+foo2 = Foo()
+
+print(foo1 is foo2)  # True
+```
+第三种方法：元类，元类是用于创建类对象的类，类对象创建实例对象时一定要调用call方法，因此在调用call时候保证始终只创建一个实例即可，type是python的元类
+```python
+class Singleton(type):
+    def __call__(cls, *args, **kwargs):
+        if not hasattr(cls, '_instance'):
+            cls._instance = super(Singleton, cls).__call__(*args, **kwargs)
+        return cls._instance
+
+
+# Python2
+class Foo(object):
+    __metaclass__ = Singleton
+
+# Python3
+class Foo(metaclass=Singleton):
+    pass
+
+foo1 = Foo()
+foo2 = Foo()
+print(foo1 is foo2)  # True
+
+```
+
 
 ## 17 Python中的作用域
 
@@ -1865,6 +1935,24 @@ xrange函数在Python3中已经取消，在python3中，range()这种实现被�
 
 http://stackoverflow.com/questions/94935/what-is-the-difference-between-range-and-xrange-functions-in-python-2-x
 
+### 16.python中内置的数据结构有几种？
+a. 整型 int、 长整型 long、浮点型 float、 复数 complex
+
+b. 字符串 str、 列表 list、 元祖 tuple
+
+c. 字典 dict 、 集合 set
+
+d. Python3 中没有 long，只有无限精度的 int
+
+### 23.可变类型和不可变类型
+1,可变类型有list,dict.不可变类型有string，number,tuple.
+
+2,当进行修改操作时，可变类型传递的是内存中的地址，也就是说，直接修改内存中的值，并没有开辟新的内存。
+
+3,不可变类型被改变时，并没有改变原内存地址中的值，而是开辟一块新的内存，将原地址中的值复制过去，对这块新开辟的内存中的值进行操作。
+
+
+
 # Python基础
 ## 文件操作
 ### 1.有一个jsonline格式的文件file.txt大小约为10K
@@ -2024,83 +2112,8 @@ A,B 中相同元素： print(set(A)&set(B))
 A,B 中不同元素:  print(set(A)^set(B))
 ```
 ## 企业面试题
-### 15.python新式类和经典类的区别？
-a. 在python里凡是继承了object的类，都是新式类
-
-b. Python3里只有新式类
-
-c. Python2里面继承object的是新式类，没有写父类的是经典类
-
-d. 经典类目前在Python里基本没有应用
-
-### 16.python中内置的数据结构有几种？
-a. 整型 int、 长整型 long、浮点型 float、 复数 complex
-
-b. 字符串 str、 列表 list、 元祖 tuple
-
-c. 字典 dict 、 集合 set
-
-d. Python3 中没有 long，只有无限精度的 int
-
-### 17.python如何实现单例模式?请写出两种实现方式?
-第一种方法:使用装饰器
-```python
-def singleton(cls):
-    instances = {}
-    def wrapper(*args, **kwargs):
-        if cls not in instances:
-            instances[cls] = cls(*args, **kwargs)
-        return instances[cls]
-    return wrapper
-    
-    
-@singleton
-class Foo(object):
-    pass
-foo1 = Foo()
-foo2 = Foo()
-print(foo1 is foo2)  # True
-```
-第二种方法：使用基类
-New 是真正创建实例对象的方法，所以重写基类的new 方法，以此保证创建对象的时候只生成一个实例
-```python
-class Singleton(object):
-    def __new__(cls, *args, **kwargs):
-        if not hasattr(cls, '_instance'):
-            cls._instance = super(Singleton, cls).__new__(cls, *args, **kwargs)
-        return cls._instance
-    
-    
-class Foo(Singleton):
-    pass
-
-foo1 = Foo()
-foo2 = Foo()
-
-print(foo1 is foo2)  # True
-```
-第三种方法：元类，元类是用于创建类对象的类，类对象创建实例对象时一定要调用call方法，因此在调用call时候保证始终只创建一个实例即可，type是python的元类
-```python
-class Singleton(type):
-    def __call__(cls, *args, **kwargs):
-        if not hasattr(cls, '_instance'):
-            cls._instance = super(Singleton, cls).__call__(*args, **kwargs)
-        return cls._instance
 
 
-# Python2
-class Foo(object):
-    __metaclass__ = Singleton
-
-# Python3
-class Foo(metaclass=Singleton):
-    pass
-
-foo1 = Foo()
-foo2 = Foo()
-print(foo1 is foo2)  # True
-
-```
 ### 18.反转一个整数，例如-123 --> -321 
 ```python
 class Solution(object):
@@ -2257,14 +2270,6 @@ letters = string.ascii_lowercase
 letters = "".join(map(chr, range(ord('a'), ord('z') + 1)))
 ```
 
-### 23.可变类型和不可变类型
-1,可变类型有list,dict.不可变类型有string，number,tuple.
-
-2,当进行修改操作时，可变类型传递的是内存中的地址，也就是说，直接修改内存中的值，并没有开辟新的内存。
-
-3,不可变类型被改变时，并没有改变原内存地址中的值，而是开辟一块新的内存，将原地址中的值复制过去，对这块新开辟的内存中的值进行操作。
-
-
 ### 25.求出列表所有奇数并构造新列表
 ```python
 a = [1,2,3,4,5,6,7,8,9,10]
@@ -2281,20 +2286,7 @@ print(num)
 num1 = reduce(lambda x,y :x+y,[1,2,3,10248])
 print(num1)
 ```
-### 27.Python中变量的作用域？（变量查找顺序)
-函数作用域的LEGB顺序
 
-1.什么是LEGB?
-
-L： local 函数内部作用域
-
-E: enclosing 函数内部与内嵌函数之间
-
-G: global 全局作用域
-
-B： build-in 内置作用
-
-python在函数里面的查找分为4种，称之为LEGB，也正是按照这是顺序来查找的
 ### 28.字符串 `"123"` 转换成 `123`，不使用内置api，例如 `int()`
 方法一： 利用 `str` 函数
 ```python
