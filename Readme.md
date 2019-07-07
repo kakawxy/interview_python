@@ -12,7 +12,7 @@
       * [7 Python中单下划线和双下划线](#7-python中单下划线和双下划线)
       * [8 字符串格式化:\x和.format](#8-字符串格式化和format)
       * [9 迭代器和生成器](#9-迭代器和生成器)
-      * [31 yield](#31 yield)
+      * [31 yield](#31-yield)
       * [10 *args and <code>**kwargs</code>](#10-args-and-kwargs)
       * [11 面向切面编程AOP和装饰器](#11-面向切面编程aop和装饰器)
       * [12 鸭子类型](#12-鸭子类型)
