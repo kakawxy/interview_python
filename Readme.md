@@ -165,9 +165,8 @@
         - [120.并行(parallel)和并发（concurrency)?](#120并行parallel和并发concurrency)
         - [121.IO密集型和CPU密集型区别？](#121io密集型和cpu密集型区别)
         - [122.python asyncio的原理？](#122python-asyncio的原理)
-    - 
-- [Web](#web)
-    - [Flask](#flask)
+  - [Web](#web)
+      - [Flask](#flask)
         - [140.对Flask蓝图(Blueprint)的理解？](#140对flask蓝图blueprint的理解)
         - [141.Flask 和 Django 路由映射的区别？](#141flask-和-django-路由映射的区别)
         
